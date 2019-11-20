@@ -38,6 +38,28 @@
   </div>
 
 
+  <!-- 使用bootstrap中的模态框来对用户做提示 -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">温馨提示</h4>
+        </div>
+        <div class="modal-body">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-dismiss="modal">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="./libs/http.js"></script>
+
   <script>
     // 使用jQuery来处理，先处理好入口函数
     $(function () {
@@ -50,26 +72,34 @@
         var userPwd = $('.input_pass').val().trim();
         //3.非空判断
         if (userName == '' || userPwd == '') {
-          alert('输入用户和密码');
+          // $('.modal-body').text();
+          $('#myModal').modal();
+          $('.modal-body').html('亲，用户名和密码不能为空哦')
           return;
         }
         //4.使用ajax请求数据，做页面渲染
         $.ajax({
           type: 'post',
-          url: 'http://localhost:8080/api/v1/admin/user/login',
+          // url: 'http://localhost:8080/api/v1/admin/user/login',
+          url: window.BigNew.user_login,
           data: {
             username: userName,
             password: userPwd
           },
           success: function (res) {
+            $('.modal-body').text(res.msg);
+            $('.myModal').modal();
             // 判断用户名或者密码是否正确
             if (res.code == 200) {
-              alert('登陆成功');
+              window.localStorage.setItem('token', res.token);
               // 跳转的网站的首页
-              window.location.href = './index.html'
-            } else {
-              alert('密码错误哦，亲！');
+              $('#myModal').on('hidden.bs.modal', function (e) {
+                window.location.href = './index.html';
+              })
+
             }
+            // else {
+            // alert('密码错误哦，亲！');
           }
         })
       })
