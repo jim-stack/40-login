@@ -72,9 +72,8 @@
         var userPwd = $('.input_pass').val().trim();
         //3.非空判断
         if (userName == '' || userPwd == '') {
-          // $('.modal-body').text();
+          $('.modal-body').text('亲，用户名和密码不能为空哦');
           $('#myModal').modal();
-          $('.modal-body').html('亲，用户名和密码不能为空哦')
           return;
         }
         //4.使用ajax请求数据，做页面渲染
@@ -88,19 +87,20 @@
           },
           success: function (res) {
             $('.modal-body').text(res.msg);
-            $('.myModal').modal();
+            $('#myModal').modal();
             // 判断用户名或者密码是否正确
             if (res.code == 200) {
-              window.localStorage.setItem('token', res.token);
-              // 跳转的网站的首页
+
               $('#myModal').on('hidden.bs.modal', function (e) {
                 window.location.href = './index.html';
               })
-
             }
             // else {
-            // alert('密码错误哦，亲！');
+            //   $('.modal-body').text(res.msg);
+            //   $('#myModal').modal();
+            // }
           }
+
         })
       })
     })
