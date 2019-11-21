@@ -55,14 +55,15 @@
         </div>
     </div>
 
-
+    <script src="./libs/http.js"></script>
     <script>
         // 当login从页面登陆成功之后，就跳转到index页面，当跳转过后，index就要立即发送ajax请求来获取用户信息，将用户信息和头像填充到对应的地方
         $(function () {
             // 立即发送ajax来获取用户的信息和头像
             $.ajax({
                 type: 'get',
-                url: 'http://localhost:8080/api/v1/admin/user/info',
+                // url: 'http://localhost:8080/api/v1/admin/user/info',
+                url: window.BigNew.user_info,
                 // headers: {
                 //     Authorization: window.localStorage.getItem('token')
                 // },
