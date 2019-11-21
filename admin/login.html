@@ -79,8 +79,8 @@
         //4.使用ajax请求数据，做页面渲染
         $.ajax({
           type: 'post',
-          // url: 'http://localhost:8080/api/v1/admin/user/login',
-          url: window.BigNew.user_login,
+          url: 'http://localhost:8080/api/v1/admin/user/login',
+          // url: window.BigNew.user_login,
           data: {
             username: userName,
             password: userPwd
@@ -88,9 +88,10 @@
           success: function (res) {
             $('.modal-body').text(res.msg);
             $('#myModal').modal();
+            // console.log(res);
             // 判断用户名或者密码是否正确
             if (res.code == 200) {
-
+              window.localStorage.setItem('token', res.token);
               $('#myModal').on('hidden.bs.modal', function (e) {
                 window.location.href = './index.html';
               })
