@@ -44,7 +44,7 @@
                     <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
                     <div class="col-sm-10">
                         <img src="images/2.jpg" alt="" class="user_pic">
-                        <input style="display: block" name="userPic" type="file" id="exampleInputFile">
+                        <input style="display: none" name="userPic" type="file" id="exampleInputFile">
                         <!-- 给label标签的for属性赋值,值是input标签的id,那这样的话点击label就相当于点击了input -->
                         <br>
                         <label for="exampleInputFile">
@@ -69,5 +69,84 @@
         </div>
     </div>
 </body>
+
+
+
+<script src="./libs/http.js"></script>
+
+<script>
+    $(function () {
+        // 当用户点击跳转到用户页面的时候，就将获取用户的信息，填充到表单中
+        $.get({
+            url: BigNew.user_detail,
+            success: function (res) {
+                // 当数据获取成功，渲染到页面上
+                if (res.code == 200) {
+                    // $('input.username').val(res.data.username);
+                    // $('input.nickname').val(res.data.nickname);
+                    // $('input.email').val(res.data.email);
+                    // $('input.password').val(res.data.password);
+                    // 因为数据中的字段名和表单中的每个表单元素是相同的，所以我们可以这样子处理
+                    for (var key in res.data) {
+                        $('input.' + key).val(res.data[key]);
+                    }
+                    $('.user_pic').attr('src', res.data.userPic);
+                }
+            }
+        })
+
+        $('#exampleInputFile').on('change', function () {
+            // console.log(this.files[0]);
+            // 将选择的图片转换成一个URL
+            var imgIcon = this.files[0];
+            var url = URL.createObjectURL(imgIcon);
+            // 给img设置src属性
+            $('.user_pic').attr('src', url);
+        })
+        // 给修改按钮注册点击事件
+        $('button.btn-edit').on('click', function (e) {
+            // 阻止默认行为
+            e.preventDefault();
+            // 获取表单信息
+            var form = $('#form')[0];
+            var userData = new FormData();
+            // 发送ajax请求
+            $.post({
+                url: BigNew.user_edit,
+                data: userData,
+                // 无需设置请求
+                contentType: false,
+                // 无需进行编码
+                processData: false,
+                success: function (res) {
+                    if (res.code == 200) {
+                        // // 刷新子页面
+                        // window.location.reload();
+                        // // 在子页面中刷新父页面
+                        // parent.window.location.reload();
+
+                        $.ajax({
+                            type: 'get',
+                            // url: 'http://localhost:8080/api/v1/admin/user/info',
+                            url: window.BigNew.user_info,
+                            // headers: {
+                            //     Authorization: window.localStorage.getItem('token')
+                            // },
+                            success: function (res) {
+                                // console.log(res);
+                                // 获取到返回的用户信息，在页面上渲染
+                                parent.$('.user_info>img').attr('src', res.data.userPic)
+                                parent.$('.user_info>span').html('欢迎&nbsp;&nbsp;' + res.data.nickname);
+                                parent.$('.user_center_link>img').attr('src', res.data.userPic)
+                            }
+                        })
+                    }
+                }
+            })
+        })
+
+    })
+
+</script>
 
 </html>
